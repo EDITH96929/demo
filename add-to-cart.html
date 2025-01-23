@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cart Page</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100">
+  <header class="p-5 bg-white shadow-md">
+    <h1 class="text-xl font-bold text-center">Your Cart</h1>
+  </header>
+  <main class="max-w-4xl mx-auto mt-10">
+    <div id="cart-container" class="bg-white p-5 shadow-lg rounded-lg">
+      <h2 class="text-2xl font-bold mb-4">Cart Items</h2>
+      <div id="cart-items" class="space-y-5"></div>
+      <p id="empty-cart" class="text-center text-gray-500 hidden">Your cart is empty.</p>
+    </div>
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 hidden bg-green-500 text-white py-2 px-4 rounded shadow-lg">
+    <span id="toast-message"></span>
+  </div>
+
+  <script>
+    const cartItemsContainer = document.getElementById("cart-items");
+    const emptyCartMessage = document.getElementById("empty-cart");
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+
+    // Fetch cart items from localStorage
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+    function renderCart() {
+      cartItemsContainer.innerHTML = "";
+
+      if (cartItems.length === 0) {
+        emptyCartMessage.style.display = "block";
+      } else {
+        emptyCartMessage.style.display = "none";
+      }
+
+      cartItems.forEach((item, index) => {
+        const itemElement = document.createElement("div");
+        itemElement.className =
+          "flex items-center justify-between p-4 border rounded-lg shadow";
+
+        itemElement.innerHTML = `
+          <div>
+            <h3 class="text-lg font-bold">${item.title}</h3>
+            <p class="text-gray-600">Price: $${item.price}</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm bg-green-100 text-green-800 py-1 px-2 rounded">${item.stock ? "In Stock" : "Out of Stock"}</span>
+            <button
+              class="text-red-500 hover:text-red-700"
+              onclick="removeItem(${index})"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+
+        cartItemsContainer.appendChild(itemElement);
+      });
+    }
+
+    function removeItem(index) {
+      const removedItem = cartItems.splice(index, 1)[0];
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      renderCart();
+      showToast(`${removedItem.title} removed from cart.`);
+    }
+
+    function showToast(message) {
+      toastMessage.textContent = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 3000);
+    }
+
+    // Initialize cart rendering
+    renderCart();
+  </script>
+</body>
+</html>

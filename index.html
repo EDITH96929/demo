@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classy E-Commerce</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white text-black p-4 shadow-md">
+        <div class="container mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="text-xl font-bold">LOGANCEE</a>
+            
+            <!-- Navigation Menu -->
+            <ul class="hidden md:flex space-x-6">
+                <li><a href="#" class="hover:text-gray-500">Home</a></li>
+                <li><a href="#" class="hover:text-gray-500">Shop</a></li>
+                <li><a href="#" class="hover:text-gray-500">Features</a></li>
+                <li><a href="#" class="hover:text-gray-500">About</a></li>
+                <li><a href="#" class="hover:text-gray-500">Contact</a></li>
+            </ul>
+
+            <!-- Search Bar and Icons -->
+            <div class="flex items-center space-x-4">
+                <input type="text" id="searchProduct" placeholder="Search..." class="p-2 rounded-full border border-gray-300 focus:outline-none focus:border-gray-500">
+                <a href="#" class="hover:text-gray-500"><i class="fas fa-shopping-cart"></i></a>
+                <a href="#" class="hover:text-gray-500"><i class="fas fa-user-circle"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="bg-gray-100 py-12">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="md:w-1/2 text-center md:text-left">
+                <h1 class="text-4xl font-bold mb-4">GIORDANO GLASSES</h1>
+                <p class="text-gray-700 mb-6">An original eyewear collection from the world-renowned American designers, featuring styles for men and women.</p>
+                <button class="px-6 py-2 bg-black text-white rounded hover:bg-gray-800">Shop Now</button>
+            </div>
+            <div class="md:w-1/2">
+                <img src="/path/to/giordano-glasses.jpg" alt="Giordano Glasses" class="rounded-lg shadow-lg">
+            </div>
+        </div>
+    </section>
+
+    <!-- Check Our Products Section -->
+    <section class="py-12">
+        <div class="container mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-6">Check Our Products</h2>
+            <div class="flex justify-center space-x-6 mb-8">
+                <a href="#" class="text-gray-700 hover:text-black">Best Seller</a>
+                <a href="#" class="text-gray-700 hover:text-black">New Arrival</a>
+                <a href="#" class="text-gray-700 hover:text-black">Most Wanted</a>
+            </div>
+
+            <!-- Product Cards -->
+            <div id="containerBox" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white text-black py-8 shadow-md">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between">
+            <div>
+                <h3 class="text-xl font-bold">LOGANCEE</h3>
+                <p class="text-gray-500">Best choice for your online store.</p>
+            </div>
+            <ul class="space-y-2">
+                <li><a href="#" class="hover:text-gray-500">Careers</a></li>
+                <li><a href="#" class="hover:text-gray-500">Investor Relations</a></li>
+                <li><a href="#" class="hover:text-gray-500">Gift Cards</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        let products = [];
+
+        function fetchData() {
+            fetch('https://dummyjson.com/products')
+                .then((val) => val.json())
+                .then((res) => {
+                    products = res.products;
+                    localStorage.setItem("products", JSON.stringify(products));
+                    fetchProduct(products); // Initial product fetch
+                });
+        }
+
+        function fetchProduct(filteredProducts) {
+            let product = "";
+            filteredProducts.map((v) => {
+                product += `<div class='border border-gray-300 bg-white p-4 rounded shadow-md hover:shadow-lg'>
+                                <img src="${v.thumbnail}" alt="${v.title}" class="rounded mb-4">
+                                <h3 class="text-lg font-bold">${v.title}</h3>
+                                <div class="flex justify-between mt-2">
+                                    <p class="text-gray-700 font-semibold">$${v.price}</p>
+                                    <button onclick="viewDetails(${v.id})" class="px-4 py-2 border border-black text-black rounded hover:bg-gray-100">View Details</button>
+                                </div>
+                            </div>`;
+            });
+            document.getElementById("containerBox").innerHTML = product;
+        }
+
+        document.getElementById("searchProduct")
+            .addEventListener("input", function searchItem(event) {
+                let searchTerm = event.target.value.toLowerCase();
+                let filterProd = products.filter((product) => {
+                    return product.title.toLowerCase().includes(searchTerm) || 
+                           product.category.toLowerCase().includes(searchTerm);
+                });
+                fetchProduct(filterProd);
+            });
+
+        function viewDetails(productId) {
+            localStorage.setItem("selectedProductId", productId); // Save ID for the next page
+            window.location.href = "./details.html";
+        }
+
+        fetchData();
+    </script>
+</body>
+</html>
