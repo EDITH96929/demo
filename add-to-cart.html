@@ -26,5 +26,51 @@
     </div>
   </main>
 
+<!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 hidden bg-green-500 text-white py-2 px-4 rounded shadow-lg">
+    <span id="toast-message"></span>
+  </div>
 
-  
+  <script>
+    const cartItemsContainer = document.getElementById("cart-items");
+    const emptyCartMessage = document.getElementById("empty-cart");
+    const toast = document.getElementById("toast");
+    const toastMessage = document.getElementById("toast-message");
+    const totalPriceElement = document.getElementById("total-price");
+    const checkoutButton = document.getElementById("checkout-btn");
+
+    let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+    function renderCart() {
+      cartItemsContainer.innerHTML = "";
+      let totalPrice = 0;
+
+      if (cartItems.length === 0) {
+        emptyCartMessage.style.display = "block";
+        checkoutButton.classList.add("hidden");
+      } else {
+        emptyCartMessage.style.display = "none";
+        checkoutButton.classList.remove("hidden");
+      }
+
+      cartItems.forEach((item, index) => {
+        totalPrice += item.price * item.quantity;
+
+        const itemElement = document.createElement("div");
+        itemElement.className = "flex items-center justify-between p-4 border rounded-lg shadow";
+
+        itemElement.innerHTML = `
+          <div>
+            <h3 class="text-lg font-bold">${item.title}</h3>
+            <p class="text-gray-600">Price: $${item.price}</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="text-gray-600 bg-gray-200 px-2 rounded" onclick="changeQuantity(${index}, -1)">-</button>
+            <span class="text-lg font-semibold">${item.quantity}</span>
+            <button class="text-gray-600 bg-gray-200 px-2 rounded" onclick="changeQuantity(${index}, 1)">+</button>
+            <span class="text-sm bg-green-100 text-green-800 py-1 px-2 rounded">${item.stock ? "In Stock" : "Out of Stock"}</span>
+            <button class="text-red-500 hover:text-red-700" onclick="removeItem(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
