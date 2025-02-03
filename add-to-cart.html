@@ -74,3 +74,41 @@
             </button>
           </div>
         `;
+ cartItemsContainer.appendChild(itemElement);
+      });
+
+      totalPriceElement.textContent = totalPrice.toFixed(2);
+    }
+
+    function removeItem(index) {
+      const removedItem = cartItems.splice(index, 1)[0];
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      renderCart();
+      showToast(`${removedItem.title} removed from cart.`);
+    }
+
+    function changeQuantity(index, change) {
+      if (cartItems[index].quantity + change > 0) {
+        cartItems[index].quantity += change;
+        localStorage.setItem("cartItems", JSON.stringify(cartItems));
+        renderCart();
+      }
+    }
+
+    function showToast(message) {
+      toastMessage.textContent = message;
+      toast.classList.remove("hidden");
+      setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 3000);
+    }
+
+    checkoutButton.addEventListener("click", () => {
+      alert("Proceeding to checkout...");
+    });
+
+    // Initialize cart rendering
+    renderCart();
+  </script>
+</body>
+</html>
